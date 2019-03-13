@@ -22,7 +22,7 @@ var svg = d3
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-  d3.csv("assets/data/data.csv")
+  d3.csv("data.csv")
   .then(function(smokerData) {
 
     // Step 1: Parse Data/Cast as numbers
@@ -30,6 +30,7 @@ var chartGroup = svg.append("g")
     smokerData.forEach(function(data) {
       data.age = +data.age;
       data.smokes = +data.smokes;
+      data.abbr = data.abbr;
     });
 
     // Step 2: Create scale functions
@@ -56,6 +57,15 @@ var chartGroup = svg.append("g")
     chartGroup.append("g")
       .call(leftAxis);
 
+
+    var textGroup = chartGroup.selectAll(".labels")
+    .data(smokerData)
+    .enter()
+    .append("text")
+    .attr("x", d => xLinearScale(d.age)-10)
+    .attr("y", d => yLinearScale(d.smokes)+6)
+    .text(d => d.abbr);
+
     // Step 5: Create Circles
     // ==============================
     var circlesGroup = chartGroup.selectAll("circle")
@@ -67,6 +77,7 @@ var chartGroup = svg.append("g")
     .attr("r", "15")
     .attr("fill", "blue")
     .attr("opacity", ".5");
+
 
     // Step 6: Initialize tool tip
     // ==============================
